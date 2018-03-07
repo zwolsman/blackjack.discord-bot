@@ -17,11 +17,13 @@ apply plugin: 'kotlin'
 repositories {
     mavenCentral()
     maven { url 'https://jitpack.io' }
+    jcenter()
 }
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     compile 'com.github.zwolsman:blackjack.core:6c74bebe9b'
+    compile 'net.dv8tion:JDA:3.5.1_345'
 }
 
 compileKotlin {
