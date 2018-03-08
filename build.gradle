@@ -22,9 +22,10 @@ repositories {
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    compile 'com.github.zwolsman:blackjack.core:6c74bebe9b'
+    compile 'com.github.zwolsman:blackjack.core:a02bcf223e'
     compile "com.github.austinv11:Discord4J:2.10.0"
-
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
+    compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.25'
 }
 
 compileKotlin {
