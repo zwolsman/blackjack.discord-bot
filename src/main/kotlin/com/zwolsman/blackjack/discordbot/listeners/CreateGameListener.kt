@@ -34,6 +34,9 @@ class CreateGameListener : IListener<MessageReceivedEvent>, HasLogger() {
             logger.info("Created game!")
             logger.info(row.game.toString())
 
+            logger.info("For debugging purpose, starting the game!")
+            row.game.start()
+
             MessageBuilder(event.client)
                     .withChannel(event.channel)
                     .withContent("Created game #${row.id} and added ${event.author.mention()} as participant")
