@@ -31,10 +31,7 @@ class HitListener : IListener<MessageReceivedEvent>, HasLogger() {
             val playerId = gameInstance.players.indexOf(event.author)
             gameInstance.game.players[playerId].hands.first { it.status == Status.OK }.playOption(Option.HIT)
 
-            MessageBuilder(event.client)
-                    .withChannel(event.channel)
-                    .withContent("You hit the hand!")
-                    .build()
+            gameInstance.sendAsMessage(event.client, event.channel)
         }
     }
 }
