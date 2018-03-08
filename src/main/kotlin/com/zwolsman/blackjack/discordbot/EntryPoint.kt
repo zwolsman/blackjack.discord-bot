@@ -46,23 +46,28 @@ data class GameInstance(val game: Game, val players: ArrayList<IUser> = arrayLis
         var builder = MessageBuilder(client).withChannel(channel)
 
         builder = builder.appendContent("**Game #$id**")
-
-        if(game.isFinished)
+        if (game.isFinished)
             builder = builder.appendContent(" (FINISHED)")
+
         builder = builder.appendContent("\r\n")
 
-        builder = builder.appendContent("\tDealer\r\n")
+        builder = builder.appendContent("_`seed ${game.deck.seed}`_\r\n")
+
+
+        builder = builder.appendContent("\tDealer _(${game.dealer.points.joinToString()})_\r\n")
         builder = builder.appendContent("\t\t_`${game.dealer.cards.joinToString { it.icon }}`_\r\n")
         for ((pIndex, player) in game.players.withIndex()) {
-            builder = builder.appendContent("\tPlayer ${pIndex + 1}\r\n")
+            builder = builder.appendContent("\tPlayer ${pIndex + 1} ")
 
             if (player.hands.size == 1) {
                 val hand = player.hands[0]
+                builder = builder.appendContent("_(${hand.points.joinToString()})_\r\n")
                 builder = builder.appendContent("\t\t_`${hand.cards.joinToString { it.icon }}`_\r\n")
 
             } else {
+                builder = builder.appendContent("\r\n")
                 for ((hIndex, hand) in player.hands.withIndex()) {
-                    builder = builder.appendContent("\t\tHand ${hIndex + 1}\r\n")
+                    builder = builder.appendContent("\t\tHand ${hIndex + 1} _(${hand.points.joinToString()})_\r\n")
                     builder = builder.appendContent("\t\t${hand.cards.joinToString { it.icon }}\r\n")
                     builder = builder.appendContent("\r\n")
 
