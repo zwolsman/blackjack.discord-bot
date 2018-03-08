@@ -2,6 +2,7 @@ package com.zwolsman.blackjack.discordbot
 
 import com.zwolsman.blackjack.core.Game
 import com.zwolsman.blackjack.discordbot.listeners.CreateGameListener
+import com.zwolsman.blackjack.discordbot.listeners.HitListener
 import org.slf4j.LoggerFactory
 import sx.blah.discord.api.ClientBuilder
 import sx.blah.discord.api.IDiscordClient
@@ -20,6 +21,7 @@ object EntryPoint {
         val client = createClient(args[0])
         client.dispatcher.run {
             registerListener(CreateGameListener())
+            registerListener(HitListener())
         }
     }
 
