@@ -7,6 +7,7 @@ import com.zwolsman.blackjack.discordbot.service.GameService
 import sx.blah.discord.api.events.IListener
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent
 import sx.blah.discord.util.MessageBuilder
+import java.util.*
 
 class CreateGameListener : IListener<MessageReceivedEvent>, HasLogger() {
 
@@ -30,7 +31,7 @@ class CreateGameListener : IListener<MessageReceivedEvent>, HasLogger() {
                 return
             }
 
-            val row = GameService.createGame(1, event.author)
+            val row = GameService.createGame(Random().nextLong(), event.author)
             logger.info("Created game!")
             logger.info(row.game.toString())
 
