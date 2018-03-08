@@ -6,7 +6,9 @@ import com.zwolsman.blackjack.discordbot.listeners.HitListener
 import org.slf4j.LoggerFactory
 import sx.blah.discord.api.ClientBuilder
 import sx.blah.discord.api.IDiscordClient
+import sx.blah.discord.handle.obj.IChannel
 import sx.blah.discord.handle.obj.IUser
+import sx.blah.discord.util.MessageBuilder
 
 object EntryPoint {
 
@@ -38,6 +40,38 @@ object EntryPoint {
     }
 }
 
-data class GameInstance(val game: Game, val players: ArrayList<IUser> = arrayListOf(), val id: Int = currentGames.size + 1)
+data class GameInstance(val game: Game, val players: ArrayList<IUser> = arrayListOf(), val id: Int = currentGames.size + 1) {
+
+    fun sendAsMessage(client: IDiscordClient, channel: IChannel) {
+        var builder = MessageBuilder(client).withChannel(channel)
+
+        builder = builder.appendContent("**Game #$id**")
+
+        if(game.isFinished)
+            builder = builder.appendContent(" (FINISHED)")
+        builder = builder.appendContent("\r\n")
+
+        builder = builder.appendContent("\tDealer\r\n")
+        builder = builder.appendContent("\t\t_`${game.dealer.cards.joinToString { it.icon }}`_\r\n")
+        for ((pIndex, player) in game.players.withIndex()) {
+            builder = builder.appendContent("\tPlayer ${pIndex + 1}\r\n")
+
+            if (player.hands.size == 1) {
+                val hand = player.hands[0]
+                builder = builder.appendContent("\t\t_`${hand.cards.joinToString { it.icon }}`_\r\n")
+
+            } else {
+                for ((hIndex, hand) in player.hands.withIndex()) {
+                    builder = builder.appendContent("\t\tHand ${hIndex + 1}\r\n")
+                    builder = builder.appendContent("\t\t${hand.cards.joinToString { it.icon }}\r\n")
+                    builder = builder.appendContent("\r\n")
+
+                }
+            }
+        }
+
+        builder.build()
+    }
+}
 
 val currentGames = arrayListOf<GameInstance>()
