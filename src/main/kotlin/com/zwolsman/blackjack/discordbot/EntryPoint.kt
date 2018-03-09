@@ -60,7 +60,7 @@ data class GameInstance(val game: Game, val players: ArrayList<IUser> = arrayLis
         builder = builder.appendContent("\tDealer _(${game.dealer.points.joinToString()})_\r\n")
         builder = builder.appendContent("\t\t_`${game.dealer.cards.joinToString { it.icon }}`_\r\n")
         for ((pIndex, player) in game.players.withIndex()) {
-            builder = builder.appendContent("\tPlayer ${pIndex + 1} ")
+            builder = builder.appendContent("\t${players[pIndex].mention(true)} ")
 
             if (player.hands.size == 1) {
                 val hand = player.hands[0]
