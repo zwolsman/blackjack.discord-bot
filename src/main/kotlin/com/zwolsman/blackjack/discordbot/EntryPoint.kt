@@ -26,6 +26,7 @@ object EntryPoint {
             registerListener(SplitCommandListener())
             registerListener(StandCommandListener())
             registerListener(JoinCommandListener())
+            registerListener(StartCommandListener())
         }
     }
 
@@ -52,13 +53,16 @@ data class GameInstance(val game: Game, val players: ArrayList<IUser> = arrayLis
             builder = builder.appendContent(" (FINISHED)")
         else if (game.isStarted)
             builder = builder.appendContent(" (STARTED)")
+        else if (!game.isStarted)
+            builder = builder.appendContent(" (OPEN)")
 
+        builder = builder.appendContent(" (${game.deck.seed})")
         builder = builder.appendContent("\r\n")
 
-        builder = builder.appendContent("_`seed ${game.deck.seed}`_\r\n")
+        //builder = builder.appendContent("_`seed ${game.deck.seed}`_\r\n")
 
         builder = builder.appendContent("\tDealer _(${game.dealer.points.joinToString()})_\r\n")
-        builder = builder.appendContent("\t\t_`${game.dealer.cards.joinToString { it.icon }}`_\r\n")
+        builder = builder.appendContent("\t\t${game.dealer.cards.joinToString { "\\" + it.icon }}\r\n")
         for ((pIndex, player) in game.players.withIndex()) {
             builder = builder.appendContent("\t${players[pIndex].mention(true)} ")
 
@@ -68,7 +72,7 @@ data class GameInstance(val game: Game, val players: ArrayList<IUser> = arrayLis
                 if (game.isFinished && hand.didWinOf(game.dealer))
                     builder = builder.appendContent(" - \uD83D\uDCB0")
                 builder = builder.appendContent("\r\n")
-                builder = builder.appendContent("\t\t_`${hand.cards.joinToString { it.icon }}`_\r\n")
+                builder = builder.appendContent("\t\t${hand.cards.joinToString { "\\" + it.icon }}\r\n")
 
             } else {
                 builder = builder.appendContent("\r\n")
@@ -84,7 +88,7 @@ data class GameInstance(val game: Game, val players: ArrayList<IUser> = arrayLis
                         builder = builder.appendContent("**")
                     }
                     builder = builder.appendContent("\r\n")
-                    builder = builder.appendContent("\t\t`${hand.cards.joinToString { it.icon }}`\r\n")
+                    builder = builder.appendContent("\t\t${hand.cards.joinToString { "\\" + it.icon }}\r\n")
                     builder = builder.appendContent("\r\n")
 
                 }

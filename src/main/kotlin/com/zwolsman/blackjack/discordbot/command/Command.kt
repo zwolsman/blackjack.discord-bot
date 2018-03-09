@@ -48,13 +48,40 @@ class JoinCommand : GlobalCommand("join") {
     }
 }
 
+class StartCommand : GlobalCommand("start") {
+    override fun matches(input: IMessage): Boolean {
+        val splitted = input.content.toLowerCase().split(" ")
+        val cmd = splitted.first()
+
+        if (!matches(cmd)) {
+            return false
+        }
+        val args = splitted.subList(1, splitted.size)
+        if (args.size != 1)
+            return false
+
+        val gameId = args[0].toIntOrNull()
+        if (gameId == null) {
+            logger.error("Argument is not an int!")
+            logger.error("argument = ${args[0]}")
+            return false
+        }
+        if(currentGames.size < gameId) {
+            logger.error("Game id is invalid!")
+            return false
+        }
+
+        return true
+    }
+}
+
 enum class Commands(val value: Command) {
     HIT(InGameCommand("hit", "h")),
     STAND(InGameCommand("stand", "s")),
     SPLIT(InGameCommand("split")),
 
-
     //Global commands
     CREATE(GlobalCommand("create")),
-    JOIN(JoinCommand())
+    JOIN(JoinCommand()),
+    START(StartCommand())
 }
