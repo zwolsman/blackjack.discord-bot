@@ -1,16 +1,14 @@
 package com.zwolsman.blackjack.discordbot
 
 import com.zwolsman.blackjack.core.Game
-import com.zwolsman.blackjack.discordbot.listeners.CreateGameListener
-import com.zwolsman.blackjack.discordbot.listeners.HitListener
-import com.zwolsman.blackjack.discordbot.listeners.ListOptionListener
-import com.zwolsman.blackjack.discordbot.listeners.StandListener
+import com.zwolsman.blackjack.discordbot.listeners.*
 import org.slf4j.LoggerFactory
 import sx.blah.discord.api.ClientBuilder
 import sx.blah.discord.api.IDiscordClient
 import sx.blah.discord.handle.obj.IChannel
 import sx.blah.discord.handle.obj.IUser
 import sx.blah.discord.util.MessageBuilder
+import kotlin.concurrent.thread
 
 object EntryPoint {
 
@@ -28,6 +26,7 @@ object EntryPoint {
             registerListener(StandListener())
             registerListener(HitListener())
             registerListener(ListOptionListener())
+            registerListener(SplitListener())
         }
     }
 
@@ -52,11 +51,12 @@ data class GameInstance(val game: Game, val players: ArrayList<IUser> = arrayLis
         builder = builder.appendContent("**Game #$id**")
         if (game.isFinished)
             builder = builder.appendContent(" (FINISHED)")
+        else if (game.isStarted)
+            builder = builder.appendContent(" (STARTED)")
 
         builder = builder.appendContent("\r\n")
 
         builder = builder.appendContent("_`seed ${game.deck.seed}`_\r\n")
-
 
         builder = builder.appendContent("\tDealer _(${game.dealer.points.joinToString()})_\r\n")
         builder = builder.appendContent("\t\t_`${game.dealer.cards.joinToString { it.icon }}`_\r\n")
@@ -71,8 +71,16 @@ data class GameInstance(val game: Game, val players: ArrayList<IUser> = arrayLis
             } else {
                 builder = builder.appendContent("\r\n")
                 for ((hIndex, hand) in player.hands.withIndex()) {
-                    builder = builder.appendContent("\t\tHand ${hIndex + 1} _(${hand.points.joinToString()})_\r\n")
-                    builder = builder.appendContent("\t\t${hand.cards.joinToString { it.icon }}\r\n")
+                    builder = builder.appendContent("\t\t")
+                    if (hand == player.currentHand) {
+                        builder = builder.appendContent("**")
+                    }
+                    builder = builder.appendContent("Hand ${hIndex + 1} _(${hand.points.joinToString()})_")
+                    if (hand == player.currentHand) {
+                        builder = builder.appendContent("**")
+                    }
+                    builder = builder.appendContent("\r\n")
+                    builder = builder.appendContent("\t\t`${hand.cards.joinToString { it.icon }}`\r\n")
                     builder = builder.appendContent("\r\n")
 
                 }
