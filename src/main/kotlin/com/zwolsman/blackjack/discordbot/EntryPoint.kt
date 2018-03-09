@@ -64,7 +64,10 @@ data class GameInstance(val game: Game, val players: ArrayList<IUser> = arrayLis
 
             if (player.hands.size == 1) {
                 val hand = player.hands[0]
-                builder = builder.appendContent("_(${hand.points.joinToString()})_\r\n")
+                builder = builder.appendContent("_(${hand.points.joinToString()})_")
+                if (game.isFinished && hand.didWinOf(game.dealer))
+                    builder = builder.appendContent(" - \uD83D\uDCB0")
+                builder = builder.appendContent("\r\n")
                 builder = builder.appendContent("\t\t_`${hand.cards.joinToString { it.icon }}`_\r\n")
 
             } else {
@@ -75,6 +78,8 @@ data class GameInstance(val game: Game, val players: ArrayList<IUser> = arrayLis
                         builder = builder.appendContent("**")
                     }
                     builder = builder.appendContent("Hand ${hIndex + 1} _(${hand.points.joinToString()})_")
+                    if (game.isFinished && hand.didWinOf(game.dealer))
+                        builder = builder.appendContent("\uD83D\uDCB0")
                     if (hand == player.currentHand) {
                         builder = builder.appendContent("**")
                     }
@@ -89,5 +94,6 @@ data class GameInstance(val game: Game, val players: ArrayList<IUser> = arrayLis
         builder.build()
     }
 }
+
 
 val currentGames = arrayListOf<GameInstance>()
