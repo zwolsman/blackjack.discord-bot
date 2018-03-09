@@ -9,3 +9,17 @@ val Player.currentHand: Hand?
     get() = hands.firstOrNull { it.status == Status.OK }
 val Game.currentPlayer: Player?
     get() = players.firstOrNull { it.hands.any { it.status == Status.OK } }
+
+fun Hand.didWinOf(dealer: Hand) : Boolean {
+    if(status == Status.BUSTED)
+        return false
+    if(points.last() > 21)
+        return false
+    if(dealer.status == Status.BUSTED)
+        return true
+    if(dealer.points.last() < points.last())
+        return true
+
+    println("Unhandeled case")
+    return false
+}
