@@ -7,6 +7,7 @@ import sx.blah.discord.api.ClientBuilder
 import sx.blah.discord.api.IDiscordClient
 import sx.blah.discord.handle.obj.IChannel
 import sx.blah.discord.handle.obj.IUser
+import sx.blah.discord.util.EmbedBuilder
 import sx.blah.discord.util.MessageBuilder
 
 object EntryPoint {
@@ -62,7 +63,7 @@ data class GameInstance(val game: Game, val players: ArrayList<IUser> = arrayLis
         //builder = builder.appendContent("_`seed ${game.deck.seed}`_\r\n")
 
         builder = builder.appendContent("\tDealer _(${game.dealer.points.joinToString()})_\r\n")
-        builder = builder.appendContent("\t\t${game.dealer.cards.joinToString { "\\" + it.icon }}\r\n")
+        builder = builder.appendContent("\t\t${game.dealer.cards.joinToString { it.icon }}\r\n")
         for ((pIndex, player) in game.players.withIndex()) {
             builder = builder.appendContent("\t${players[pIndex].mention(true)} ")
 
@@ -71,24 +72,25 @@ data class GameInstance(val game: Game, val players: ArrayList<IUser> = arrayLis
                 builder = builder.appendContent("_(${hand.points.joinToString()})_")
                 if (game.isFinished && hand.didWinOf(game.dealer))
                     builder = builder.appendContent(" - \uD83D\uDCB0")
+
+                if(game.currentPlayer == player)
+                    builder = builder.appendContent(" ⬅")
+
                 builder = builder.appendContent("\r\n")
-                builder = builder.appendContent("\t\t${hand.cards.joinToString { "\\" + it.icon }}\r\n")
+                builder = builder.appendContent("\t\t${hand.cards.joinToString { it.icon }}\r\n")
 
             } else {
                 builder = builder.appendContent("\r\n")
                 for ((hIndex, hand) in player.hands.withIndex()) {
                     builder = builder.appendContent("\t\t")
                     if (hand == player.currentHand) {
-                        builder = builder.appendContent("**")
+                        builder = builder.appendContent(" ⬅ ")
                     }
                     builder = builder.appendContent("Hand ${hIndex + 1} _(${hand.points.joinToString()})_")
                     if (game.isFinished && hand.didWinOf(game.dealer))
                         builder = builder.appendContent("\uD83D\uDCB0")
-                    if (hand == player.currentHand) {
-                        builder = builder.appendContent("**")
-                    }
                     builder = builder.appendContent("\r\n")
-                    builder = builder.appendContent("\t\t${hand.cards.joinToString { "\\" + it.icon }}\r\n")
+                    builder = builder.appendContent("\t\t${hand.cards.joinToString { it.icon }}\r\n")
                     builder = builder.appendContent("\r\n")
 
                 }
@@ -96,6 +98,14 @@ data class GameInstance(val game: Game, val players: ArrayList<IUser> = arrayLis
         }
 
         builder.build()
+    }
+
+
+    fun sendAsMsg() {
+        val embedBuilder = EmbedBuilder()
+                .withTitle("⚜ Game info")
+                .appendField("ID", id.toString(), true)
+                .appendField("Seed", game.deck.seed.toString(), true)
     }
 }
 

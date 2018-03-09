@@ -8,7 +8,7 @@ import com.zwolsman.blackjack.core.game.Status
 val Player.currentHand: Hand?
     get() = hands.firstOrNull { it.status == Status.OK }
 val Game.currentPlayer: Player?
-    get() = players.firstOrNull { it.hands.any { it.status == Status.OK } }
+    get() = if(isStarted) players.firstOrNull { it.hands.any { it.status == Status.OK } } else null
 
 fun Hand.didWinOf(dealer: Hand) : Boolean {
     if(status == Status.BUSTED)

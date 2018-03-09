@@ -10,7 +10,7 @@ class JoinCommandListener : GlobalCommandListener(Commands.JOIN) {
     override fun commandReceived(msg: String, event: MessageReceivedEvent) {
         logger.info("Received join command with valid game id!")
 
-        val id = msg.substringAfter("join").trim().toInt()
+        val id = msg.substringAfter("join").trim().toInt() - 1
         val gameInstance = currentGames[id]
         if (gameInstance.game.isStarted) {
             event.channel.sendMessage("Game is already started!")
