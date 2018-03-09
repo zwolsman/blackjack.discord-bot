@@ -24,17 +24,16 @@ class CreateGameListener : IListener<MessageReceivedEvent>, HasLogger() {
 
             val authorsGame = currentGames.find { it.players.any { it.longID == event.author.longID } && !it.game.isFinished }
             if (authorsGame != null) {
+                logger.error("User ${event.author.name} is part of an other game, can't create new one!")
                 MessageBuilder(event.client)
                         .withChannel(event.channel)
-                        .withContent("Not so fast ${event.author.mention()}! You are already in game #${authorsGame.id}")
+                        .withContent("Not so fast ${event.author.name}! You are already in game #${authorsGame.id}")
                         .build()
                 return
             }
 
             val row = GameService.createGame(Random().nextLong(), event.author)
-            logger.info("Created game!")
-            logger.info(row.game.toString())
-
+            logger.info("Created game, creator: ${event.author.name}!")
             logger.info("For debugging purpose, starting the game!")
             row.game.start()
 
