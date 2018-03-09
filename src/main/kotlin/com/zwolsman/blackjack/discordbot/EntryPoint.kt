@@ -1,10 +1,7 @@
 package com.zwolsman.blackjack.discordbot
 
 import com.zwolsman.blackjack.core.Game
-import com.zwolsman.blackjack.discordbot.command.listeners.CreateGameCommandListener
-import com.zwolsman.blackjack.discordbot.command.listeners.HitCommandListener
-import com.zwolsman.blackjack.discordbot.command.listeners.SplitCommandListener
-import com.zwolsman.blackjack.discordbot.command.listeners.StandCommandListener
+import com.zwolsman.blackjack.discordbot.command.listeners.*
 import org.slf4j.LoggerFactory
 import sx.blah.discord.api.ClientBuilder
 import sx.blah.discord.api.IDiscordClient
@@ -28,6 +25,7 @@ object EntryPoint {
             registerListener(HitCommandListener())
             registerListener(SplitCommandListener())
             registerListener(StandCommandListener())
+            registerListener(JoinCommandListener())
         }
     }
 
