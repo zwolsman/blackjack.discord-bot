@@ -8,7 +8,6 @@ import sx.blah.discord.api.IDiscordClient
 import sx.blah.discord.handle.obj.IChannel
 import sx.blah.discord.handle.obj.IUser
 import sx.blah.discord.util.MessageBuilder
-import kotlin.concurrent.thread
 
 object EntryPoint {
 

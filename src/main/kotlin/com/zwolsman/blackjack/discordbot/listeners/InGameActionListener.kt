@@ -1,7 +1,6 @@
 package com.zwolsman.blackjack.discordbot.listeners
 
 import com.zwolsman.blackjack.core.game.Option
-import com.zwolsman.blackjack.core.game.Status
 import com.zwolsman.blackjack.discordbot.Config
 import com.zwolsman.blackjack.discordbot.GameInstance
 import com.zwolsman.blackjack.discordbot.HasLogger
