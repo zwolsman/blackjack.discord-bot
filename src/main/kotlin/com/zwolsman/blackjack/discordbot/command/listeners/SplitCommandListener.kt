@@ -11,6 +11,6 @@ class SplitCommandListener : InGameCommandListener(Commands.SPLIT) {
     override fun commandReceived(gameInstance: GameInstance, playerId: Int, event: MessageReceivedEvent) {
         logger.info("Received split command")
         gameInstance.game.players[playerId].currentHand?.playOption(Option.SPLIT)
-        gameInstance.sendAsMessage(event.client, event.channel)
+        gameInstance.sendAsMessage(event.channel)
     }
 }

@@ -11,6 +11,6 @@ class StandCommandListener : InGameCommandListener(Commands.STAND) {
     override fun commandReceived(gameInstance: GameInstance, playerId: Int, event: MessageReceivedEvent) {
         logger.info("Received stand command")
         gameInstance.game.players[playerId].currentHand?.playOption(Option.STAND)
-        gameInstance.sendAsMessage(event.client, event.channel)
+        gameInstance.sendAsMessage(event.channel)
     }
 }

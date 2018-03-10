@@ -20,6 +20,6 @@ class JoinCommandListener : GlobalCommandListener(Commands.JOIN) {
         gameInstance.game.addPlayer(Player())
         gameInstance.players.add(event.author)
 
-        gameInstance.sendAsMessage(event.client, event.channel)
+        gameInstance.sendAsMessage(event.channel)
     }
 }

@@ -15,7 +15,7 @@ class StartCommandListener : GlobalCommandListener(Commands.START) {
         }
         gameInstance.game.start()
 
-        gameInstance.sendAsMessage(event.client, event.channel)
+        gameInstance.sendAsMessage(event.channel)
     }
 
 }

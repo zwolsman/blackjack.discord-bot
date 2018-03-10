@@ -14,6 +14,6 @@ class CreateGameCommandListener : GlobalCommandListener(Commands.CREATE) {
 //        logger.info("For debugging purpose, starting the game!")
 //        row.game.start()
 
-        row.sendAsMessage(event.client, event.channel)
+        row.sendAsMessage(event.channel)
     }
 }
