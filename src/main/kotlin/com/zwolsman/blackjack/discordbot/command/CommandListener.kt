@@ -3,6 +3,7 @@ package com.zwolsman.blackjack.discordbot.command
 import com.zwolsman.blackjack.discordbot.*
 import sx.blah.discord.api.events.IListener
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent
+import sx.blah.discord.util.RequestBuffer
 
 
 abstract class BaseCommandListener : IListener<MessageReceivedEvent>, HasLogger() {
@@ -17,6 +18,10 @@ abstract class GlobalCommandListener(override val command: Commands) : BaseComma
         }
         val msg = event.message.content.toLowerCase().trim()
         if (command.value.matches(event.message)) {
+            RequestBuffer.request {
+                event.message.delete()
+            }
+
             commandReceived(msg, event)
         }
     }
@@ -37,8 +42,11 @@ abstract class InGameCommandListener(override val command: Commands) : BaseComma
                 return
             }
 
-            val playerId = gameInstance.players.indexOf(event.author)
+            RequestBuffer.request {
+                event.message.delete()
+            }
 
+            val playerId = gameInstance.players.indexOf(event.author)
             if (gameInstance.game.players[playerId] == gameInstance.game.currentPlayer) {
                 logger.info("User ${event.author.name} played option \"${command}\" in game ${gameInstance.id}")
                 commandReceived(gameInstance, playerId, event)
