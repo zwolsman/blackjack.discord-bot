@@ -6,7 +6,6 @@ import com.zwolsman.blackjack.discordbot.command.listeners.CreateCommandListener
 import com.zwolsman.blackjack.discordbot.entities.Games
 import com.zwolsman.blackjack.discordbot.entities.GamesUsers
 import com.zwolsman.blackjack.discordbot.entities.Users
-import com.zwolsman.blackjack.discordbot.listeners.BasicListener
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils.create
 import org.jetbrains.exposed.sql.StdOutSqlLogger
@@ -19,9 +18,7 @@ import sx.blah.discord.handle.obj.IUser
 import sx.blah.discord.util.EmbedBuilder
 import java.util.*
 
-object EntryPoint {
-
-    val logger = LoggerFactory.getLogger(this::class.java)
+object EntryPoint : HasLogger() {
 
     @JvmStatic
     fun main(args: Array<String>) {
@@ -254,8 +251,6 @@ data class GameInstance(val game: Game, val id: Int, val players: ArrayList<IUse
     }
 
     fun sendAsMessage(channel: IChannel) {
-
-
         if (!game.isStarted) {
             sendOpenGame(channel)
             return
@@ -266,101 +261,6 @@ data class GameInstance(val game: Game, val id: Int, val players: ArrayList<IUse
             sendPlayingGame(channel)
             return
         }
-//        if (game.isFinished) {
-//            sendFinishedGame(channel)
-//            return
-//        }
-
-//
-//        var builder = EmbedBuilder()
-//                .withTimestamp(Date().toInstant())
-//                .withTitle(":game_die: Game $id")
-//                .withDesc("Game status: ${if (game.isFinished) "FINISHED" else if (game.isStarted) "STARTED" else "OPEN"}")
-//                .withColor(234, 89, 110)
-//                .withColor(3619643)
-//
-//        val emptyField = {
-//            builder = builder.appendField("\u200E", "\u200E", true)
-//        }
-//
-//        builder = builder.appendField("Dealer", if (game.dealer.cards.size == 0) "none" else game.dealer.cards.joinToString { it.icon }, true)
-//
-//        if (game.isFinished)
-//            if (game.dealer.status == Status.BUSTED)
-//                builder = builder.appendField("Points", "${game.dealer.points.last()} :boom:", true)
-//            else
-//                builder = builder.appendField("Points", game.dealer.points.last().toString(), true)
-//        else
-//            builder = builder.appendField("Points", game.dealer.points.joinToString(), true)
-//        emptyField()
-//
-//        for ((pid, player) in game.players.withIndex()) {
-//            val mention = players[pid].getDisplayName(channel.guild)
-//            if (player.hands.size == 1) {
-//                val hand = player.hands[0]
-//
-//                val points = if (game.isFinished)
-//                    hand.points.last().toString()
-//                else
-//                    hand.points.joinToString()
-//
-//                //append username
-//                if (game.currentPlayer == player)
-//                    builder = builder.appendField("$mention :arrow_left:", hand.cards.joinToString { it.icon }, true)
-//                else
-//                    builder = builder.appendField(mention, if (hand.cards.size == 0) "none" else hand.cards.joinToString { it.icon }, true)
-//
-//                //append points
-//                if (game.isFinished && hand.didWinOf(game.dealer)) {
-//                    builder = builder.appendField("Points", "$points :tada:", true)
-//                } else {
-//                    if (hand.status == Status.BUSTED) {
-//                        builder = builder.appendField("Points", "$points :skull_crossbones:", true)
-//                    } else {
-//                        builder = builder.appendField("Points", points, true)
-//                    }
-//                }
-//
-//                emptyField()
-//
-//            } else {
-//                for ((hid, hand) in player.hands.withIndex()) {
-//                    val points = if (game.isFinished)
-//                        hand.points.last().toString()
-//                    else
-//                        hand.points.joinToString()
-//
-//                    //append username with indicator
-//                    if (game.currentPlayer?.currentHand == hand) {
-//                        builder = builder.appendField("$mention hand ${hid + 1} :arrow_left:", if (hand.cards.size == 0) "none" else hand.cards.joinToString { it.icon }, true)
-//                    } else {
-//                        builder = builder.appendField("$mention hand ${hid + 1}", if (hand.cards.size == 0) "none" else hand.cards.joinToString { it.icon }, true)
-//
-//                    }
-//
-//                    if (game.isFinished && hand.didWinOf(game.dealer)) {
-//                        builder = builder.appendField("Points", "$points :tada:", true)
-//                    } else {
-//                        if (hand.status == Status.BUSTED) {
-//                            builder = builder.appendField("Points", "$points :skull_crossbones:", true)
-//                        } else {
-//                            builder = builder.appendField("Points", points, true)
-//                        }
-//                    }
-//                    emptyField()
-//                }
-//            }
-//        }
-//
-//        if (msgId != null) {
-//            val msg = channel.getMessageByID(msgId)
-//            msg.edit(builder.build())
-//        } else {
-//            channel.sendMessage(builder.build())
-//        }
     }
 
 }
-
-
-val currentGames = arrayListOf<GameInstance>()
