@@ -2,6 +2,7 @@ package com.zwolsman.blackjack.discordbot.command
 
 import com.zwolsman.blackjack.discordbot.Config
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent
+import sx.blah.discord.handle.obj.IChannel
 
 abstract class BaseCommand(vararg val aliases: String) {
 
@@ -11,7 +12,9 @@ abstract class BaseCommand(vararg val aliases: String) {
         return aliases.any { it.equals(cmd, true) }
     }
 
-    fun parse(event: MessageReceivedEvent): Boolean {
+    lateinit var channel: IChannel
+
+    open fun parse(event: MessageReceivedEvent): Boolean {
         val cmd = event.message.content.split(" ")
         if (cmd.isEmpty())
             return false
@@ -21,7 +24,7 @@ abstract class BaseCommand(vararg val aliases: String) {
         if (first.length <= Config.prefix.length)
             return false
 
-        if(!first.startsWith(Config.prefix, true))
+        if (!first.startsWith(Config.prefix, true))
             return false
 
         if (!matches(first.substring(Config.prefix.length)))
@@ -32,6 +35,7 @@ abstract class BaseCommand(vararg val aliases: String) {
         else
             args = emptyList()
 
+        channel = event.channel
         return true
     }
 }

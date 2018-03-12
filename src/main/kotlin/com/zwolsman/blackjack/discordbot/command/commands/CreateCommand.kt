@@ -1,5 +1,5 @@
 package com.zwolsman.blackjack.discordbot.command.commands
 
-import com.zwolsman.blackjack.discordbot.command.BaseCommand
+import com.zwolsman.blackjack.discordbot.command.UserAwareCommand
 
-class CreateCommand : BaseCommand("create")
+class CreateCommand : UserAwareCommand("create")
