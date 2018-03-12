@@ -4,13 +4,11 @@ import com.zwolsman.blackjack.discordbot.entities.User
 import org.jetbrains.exposed.sql.transactions.transaction
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent
 
-abstract class UserAwareCommand(vararg aliases: String) : BaseCommand(*aliases) {
+abstract class UserAwareCommandHandler<T : BaseCommand> : BaseCommandHandler<T>() {
 
     lateinit var user: User
-    override fun parse(event: MessageReceivedEvent): Boolean {
-        if (!super.parse(event))
-            return false
 
+    override fun handle(event: MessageReceivedEvent) {
         val user = transaction {
             User.findInGuildAndChannel(event.guild.longID, event.author.longID).firstOrNull()
         }
@@ -28,7 +26,6 @@ abstract class UserAwareCommand(vararg aliases: String) : BaseCommand(*aliases) 
         } else {
             this.user = user
         }
-
-        return true
+        super.handle(event)
     }
 }
