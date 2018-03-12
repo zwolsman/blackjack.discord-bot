@@ -2,11 +2,12 @@ package com.zwolsman.blackjack.discordbot
 
 import com.zwolsman.blackjack.core.Game
 import com.zwolsman.blackjack.core.game.Status
+import com.zwolsman.blackjack.discordbot.entities.Games
+import com.zwolsman.blackjack.discordbot.entities.GamesUsers
+import com.zwolsman.blackjack.discordbot.entities.Users
 import com.zwolsman.blackjack.discordbot.listeners.BasicListener
-import com.zwolsman.blackjack.discordbot.models.*
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils.create
-import org.jetbrains.exposed.sql.SchemaUtils.drop
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.slf4j.LoggerFactory
@@ -42,29 +43,7 @@ object EntryPoint {
         Database.connect(jdbc, driver, "blackjack", "zaQXZSKANp9zuP5W")
         transaction {
             logger.addLogger(StdOutSqlLogger)
-            create(Users)
-
-//            val movie = StarWarsFilm.new {
-//                name = "The Last Jedi"
-//                sequelId = 8
-//                director = "Rian Johnson"
-//            }
-//            val movies = StarWarsFilm.all()
-//            val moviesx = StarWarsFilm.find { StarWarsFilms.sequelId eq 8 }
-//            val moviexx = StarWarsFilm.findById(5)
-//
-//            val marvin = User.new {
-//                name = "frits"
-//            }
-//
-//            val userRating = UserRating.new {
-//                value = 8
-//                film = moviesx.first()
-//                user = marvin
-//            }
-//
-//            val ratings = moviesx.first().ratings
-//            ratings.forEach { println("${it.film.name} was rated by ${it.user.name} with a value of ${it.value}") }
+            create(Users, Games, GamesUsers)
         }
     }
 
