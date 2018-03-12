@@ -8,11 +8,11 @@ import sx.blah.discord.handle.obj.IUser
 
 object GameService {
 
-    fun createGame(seed: Long, author: IUser): GameInstance {
+    fun createGame(seed: Long, id: Int, author: IUser): GameInstance {
         val game = Game(seed)
         game.addPlayer(Player())
 
-        val instance = GameInstance(game)
+        val instance = GameInstance(game, id)
         instance.players.add(author)
 
         currentGames.add(instance)

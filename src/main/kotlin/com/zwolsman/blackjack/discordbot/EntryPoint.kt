@@ -2,15 +2,19 @@ package com.zwolsman.blackjack.discordbot
 
 import com.zwolsman.blackjack.core.Game
 import com.zwolsman.blackjack.core.game.Status
-import com.zwolsman.blackjack.discordbot.command.listeners.*
+import com.zwolsman.blackjack.discordbot.listeners.BasicListener
+import com.zwolsman.blackjack.discordbot.models.*
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SchemaUtils.create
+import org.jetbrains.exposed.sql.SchemaUtils.drop
+import org.jetbrains.exposed.sql.StdOutSqlLogger
+import org.jetbrains.exposed.sql.transactions.transaction
 import org.slf4j.LoggerFactory
 import sx.blah.discord.api.ClientBuilder
 import sx.blah.discord.api.IDiscordClient
 import sx.blah.discord.handle.obj.IChannel
-import sx.blah.discord.handle.obj.IEmbed
 import sx.blah.discord.handle.obj.IUser
 import sx.blah.discord.util.EmbedBuilder
-import sx.blah.discord.util.MessageBuilder
 import java.util.*
 
 object EntryPoint {
@@ -23,14 +27,44 @@ object EntryPoint {
             logger.error("Empty arguments! Please provide a token as argument")
             return
         }
+        setupDb()
+
         val client = createClient(args[0])
         client.dispatcher.run {
-            registerListener(CreateGameCommandListener())
-            registerListener(HitCommandListener())
-            registerListener(SplitCommandListener())
-            registerListener(StandCommandListener())
-            registerListener(JoinCommandListener())
-            registerListener(StartCommandListener())
+            registerListener(BasicListener())
+        }
+    }
+
+
+    private fun setupDb() {
+        val jdbc = "jdbc:mysql://localhost:3306/blackjack"
+        val driver = "com.mysql.jdbc.Driver"
+        Database.connect(jdbc, driver, "blackjack", "zaQXZSKANp9zuP5W")
+        transaction {
+            logger.addLogger(StdOutSqlLogger)
+            create(Users)
+
+//            val movie = StarWarsFilm.new {
+//                name = "The Last Jedi"
+//                sequelId = 8
+//                director = "Rian Johnson"
+//            }
+//            val movies = StarWarsFilm.all()
+//            val moviesx = StarWarsFilm.find { StarWarsFilms.sequelId eq 8 }
+//            val moviexx = StarWarsFilm.findById(5)
+//
+//            val marvin = User.new {
+//                name = "frits"
+//            }
+//
+//            val userRating = UserRating.new {
+//                value = 8
+//                film = moviesx.first()
+//                user = marvin
+//            }
+//
+//            val ratings = moviesx.first().ratings
+//            ratings.forEach { println("${it.film.name} was rated by ${it.user.name} with a value of ${it.value}") }
         }
     }
 
@@ -47,7 +81,7 @@ object EntryPoint {
     }
 }
 
-data class GameInstance(val game: Game, val players: ArrayList<IUser> = arrayListOf(), val id: Int = currentGames.size + 1) {
+data class GameInstance(val game: Game, val id: Int, val players: ArrayList<IUser> = arrayListOf()) {
 
     var msgId: Long? = null
 
@@ -66,9 +100,10 @@ data class GameInstance(val game: Game, val players: ArrayList<IUser> = arrayLis
                 .withColor(234, 89, 110)
                 .appendField("Current players", players.joinToString(separator = ", \r\n") { "${it.mention()} with a buy in of `$buyIn server points`" }, false)
         if (msgId != null) {
-            channel.getMessageByID(msgId!!).delete()
+            channel.getMessageByID(msgId!!).edit(builder.build())
+        } else {
+            msgId = channel.sendMessage(builder.build()).longID
         }
-        msgId = channel.sendMessage(builder.build()).longID
 
     }
 
@@ -231,9 +266,10 @@ data class GameInstance(val game: Game, val players: ArrayList<IUser> = arrayLis
             }
         }
         if (msgId != null) {
-            channel.getMessageByID(msgId!!).delete()
+            channel.getMessageByID(msgId!!).edit(builder.build())
+        } else {
+            msgId = channel.sendMessage(builder.build()).longID
         }
-        msgId = channel.sendMessage(builder.build()).longID
 
     }
 
