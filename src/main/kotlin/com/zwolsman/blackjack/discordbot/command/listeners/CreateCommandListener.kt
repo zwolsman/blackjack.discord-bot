@@ -3,7 +3,7 @@ package com.zwolsman.blackjack.discordbot.command.listeners
 import com.zwolsman.blackjack.discordbot.command.UserAwareCommandHandler
 import com.zwolsman.blackjack.discordbot.command.commands.CreateCommand
 import com.zwolsman.blackjack.discordbot.entities.Game
-import com.zwolsman.blackjack.discordbot.entities.GamesUser
+import com.zwolsman.blackjack.discordbot.getMinimalBuyIn
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
 
@@ -18,10 +18,7 @@ class CreateCommandListener : UserAwareCommandHandler<CreateCommand>() {
             channel.sendMessage("There is already a game playing in this channel.")
             return
         }
-
-        val buyInRegex = "^buy-in-([0-9]+[mk]?)\$".toRegex()
-
-        val minBuyIn = buyInRegex.find(channel.name)?.groups?.get(1)?.value?.toInt()
+        val minBuyIn = channel.getMinimalBuyIn()
 
         if (minBuyIn == null) {
             sendError("Invalid channel to create a game, please use a channel that starts with `buy-in`")
@@ -45,12 +42,7 @@ class CreateCommandListener : UserAwareCommandHandler<CreateCommand>() {
                 channelId = channel.longID
                 seed = Random().nextLong()
             }
-            GamesUser.new {
-                this.user = this@CreateCommandListener.user
-                this.game = game
-                this.buyIn = buyIn
-            }
-            this@CreateCommandListener.user.guildPoints -= buyIn
+            game.addUser(this@CreateCommandListener.user, buyIn)
             return@transaction game
         }
 
