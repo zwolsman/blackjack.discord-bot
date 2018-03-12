@@ -66,11 +66,10 @@ data class GameInstance(val game: Game, val players: ArrayList<IUser> = arrayLis
                 .withColor(234, 89, 110)
                 .appendField("Current players", players.joinToString(separator = ", \r\n") { "${it.mention()} with a buy in of `$buyIn server points`" }, false)
         if (msgId != null) {
-            val msg = channel.getMessageByID(msgId!!)
-            msg.edit(builder.build())
-        } else {
-            msgId = channel.sendMessage(builder.build()).longID
+            channel.getMessageByID(msgId!!).delete()
         }
+        msgId = channel.sendMessage(builder.build()).longID
+
     }
 
     private fun sendFinishedGame(channel: IChannel) {
@@ -116,7 +115,7 @@ data class GameInstance(val game: Game, val players: ArrayList<IUser> = arrayLis
 
 
         builder = builder.appendField("Dealer", game.dealer.cards.joinToString { it.icon }, true)
-        builder = builder.appendField("Points", "${game.dealer.points.last()} ${if(game.dealer.status == Status.BUSTED) ":boom:" else ""}", true)
+        builder = builder.appendField("Points", "${game.dealer.points.last()} ${if (game.dealer.status == Status.BUSTED) ":boom:" else ""}", true)
         emptyField()
 
 
@@ -232,11 +231,10 @@ data class GameInstance(val game: Game, val players: ArrayList<IUser> = arrayLis
             }
         }
         if (msgId != null) {
-            val msg = channel.getMessageByID(msgId!!)
-            msg.edit(builder.withDesc(desc).build())
-        } else {
-            msgId = channel.sendMessage(builder.withDesc(desc).build()).longID
+            channel.getMessageByID(msgId!!).delete()
         }
+        msgId = channel.sendMessage(builder.build()).longID
+
     }
 
     fun sendAsMessage(channel: IChannel) {

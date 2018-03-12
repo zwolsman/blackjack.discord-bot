@@ -46,10 +46,15 @@ abstract class InGameCommandListener(override val command: Commands) : BaseComma
                 event.message.delete()
             }
 
-            val playerId = gameInstance.players.indexOf(event.author)
-            if (gameInstance.game.players[playerId] == gameInstance.game.currentPlayer) {
+            val pid = gameInstance.game.players.indexOf(gameInstance.game.currentPlayer)
+            if (pid == -1) {
+                logger.error("Nobody can play on game ${gameInstance.id}")
+                return
+            }
+
+            if (gameInstance.game.players[pid] == gameInstance.game.currentPlayer) {
                 logger.info("User ${event.author.name} played option \"${command}\" in game ${gameInstance.id}")
-                commandReceived(gameInstance, playerId, event)
+                commandReceived(gameInstance, pid, event)
             } else {
                 logger.error("Not the turn of ${event.author.mention()} in game ${gameInstance.id}!")
             }
