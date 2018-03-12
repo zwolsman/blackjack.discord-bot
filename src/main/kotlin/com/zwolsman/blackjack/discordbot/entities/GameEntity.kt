@@ -36,7 +36,7 @@ class Game(id: EntityID<Int>) : IntEntity(id) {
         fun findInChannel(channel: IChannel) = findInChannel(channel.longID)
     }
 
-    val users by GamesUser referrersOn GamesUsers.user
+    val users by GamesUser referrersOn GamesUsers.game
     var seed by Games.seed
     var history by Games.history
     var status by Games.status
