@@ -13,9 +13,22 @@ abstract class UserAwareCommand(vararg aliases: String) : BaseCommand(*aliases) 
 
         val user = transaction {
             User.findInGuildAndChannel(event.guild.longID, event.author.longID).firstOrNull()
-        } ?: return false
+        }
+        if (user == null) {
+            logger.info("${event.author.getDisplayName(event.guild)} doesn't have an account yet. Let's create one!")
+            this.user = transaction {
+                User.new {
+                    name = event.author.getDisplayName(event.guild)
+                    discordId = event.author.longID
+                    guildId = event.guild.longID
+                    guildPoints = 500
+                }
+            }
 
-        this.user = user
+        } else {
+            this.user = user
+        }
+
         return true
     }
 }

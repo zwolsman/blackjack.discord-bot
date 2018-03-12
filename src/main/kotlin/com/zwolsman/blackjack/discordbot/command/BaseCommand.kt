@@ -1,10 +1,11 @@
 package com.zwolsman.blackjack.discordbot.command
 
 import com.zwolsman.blackjack.discordbot.Config
+import com.zwolsman.blackjack.discordbot.HasLogger
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent
 import sx.blah.discord.handle.obj.IChannel
 
-abstract class BaseCommand(vararg val aliases: String) {
+abstract class BaseCommand(vararg val aliases: String) : HasLogger() {
 
     lateinit var args: List<String>
 

@@ -13,10 +13,15 @@ abstract class BaseCommandHandler<T : BaseCommand> : IListener<MessageReceivedEv
 
     override fun handle(event: MessageReceivedEvent) {
         if (command.parse(event)) {
-            logger.info("Received ${command.aliases.first()} command from ${event.author.getDisplayName(event.guild)} in ${event.guild.name}")
+            logger.info("Received ${command::class.java.simpleName} from ${event.author.getDisplayName(event.guild)} in ${event.guild.name}")
             channel = event.channel
             commandReceived(command)
         }
+    }
+
+
+    fun sendError(message: String) {
+        channel.sendMessage(message)
     }
 
     abstract fun commandReceived(command: T)

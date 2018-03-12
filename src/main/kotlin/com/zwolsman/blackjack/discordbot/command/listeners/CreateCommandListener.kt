@@ -3,18 +3,58 @@ package com.zwolsman.blackjack.discordbot.command.listeners
 import com.zwolsman.blackjack.discordbot.command.BaseCommandHandler
 import com.zwolsman.blackjack.discordbot.command.commands.CreateCommand
 import com.zwolsman.blackjack.discordbot.entities.Game
+import com.zwolsman.blackjack.discordbot.entities.GamesUser
+import org.jetbrains.exposed.sql.transactions.transaction
+import java.util.*
 
 class CreateCommandListener : BaseCommandHandler<CreateCommand>() {
     override fun commandReceived(command: CreateCommand) {
         logger.info("Yooooooo let's go!")
         logger.info("${command.user.name} has ${command.user.guildPoints} guild points and wants to create a game mannn")
 
-        if(Game.isOpenIn(command.channel.longID)) {
+        if (Game.isOpenIn(command.channel.longID)) {
             channel.sendMessage("There is already a game playing in this channel.")
             return
         }
 
-        channel.sendMessage("Has to create a game for you")
+        val buyInRegex = "^buy-in-([0-9]+[mk]?)\$".toRegex()
+
+        val minBuyIn = buyInRegex.find(channel.name)?.groups?.get(1)?.value?.toInt()
+
+        if (minBuyIn == null) {
+            sendError("Invalid channel to create a game, please use a channel that starts with `buy-in`")
+            return
+        }
+        logger.info("The minimum buy in is $minBuyIn, parsed from ${channel.name} in guild ${channel.guild.name}")
+        val buyIn = command.args.getOrNull(0)?.toIntOrNull() ?: minBuyIn
+
+        if (buyIn > command.user.guildPoints) {
+            sendError("I'm sorry ${command.user.mention}, you have insufficient points to create a game and buy in with **${buyIn} server points**.")
+            return
+        } else if (buyIn < minBuyIn) {
+            sendError("Buy in amount is **too low**, the minimum is **$minBuyIn server points**")
+            return
+        }
+
+        logger.info("${command.user.name} will create a game and buy in with $buyIn server points in guild ${channel.guild.name}")
+
+        val game = transaction {
+            val game = Game.new {
+                channelId = channel.longID
+                seed = Random().nextLong()
+            }
+            GamesUser.new {
+                this.user = this@CreateCommandListener.command.user
+                this.game = game
+                this.buyIn = buyIn
+            }
+            this@CreateCommandListener.command.user.guildPoints -= buyIn
+            return@transaction game
+        }
+
+        logger.info("Created a new game")
+
+        channel.sendMessage("Created game with id ${game.id.value} and ${command.user.mention} bought in with **$buyIn server points**")
     }
 
     override val command = CreateCommand()

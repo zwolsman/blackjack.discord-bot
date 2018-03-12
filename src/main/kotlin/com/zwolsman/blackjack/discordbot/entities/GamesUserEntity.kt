@@ -8,6 +8,7 @@ import org.jetbrains.exposed.dao.IntIdTable
 object GamesUsers : IntIdTable() {
     val user = reference("user", Users)
     val game = reference("game", Games)
+    val buyIn = integer("buy_in")
 }
 
 class GamesUser(id: EntityID<Int>) : IntEntity(id) {
@@ -15,4 +16,5 @@ class GamesUser(id: EntityID<Int>) : IntEntity(id) {
 
     var user by User referencedOn GamesUsers.user
     var game by Game referencedOn GamesUsers.game
+    var buyIn by GamesUsers.buyIn
 }
