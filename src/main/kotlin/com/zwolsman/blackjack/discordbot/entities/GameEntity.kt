@@ -19,6 +19,7 @@ object Games : IntIdTable() {
 class Game(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<Game>(Games) {
         fun isOpenIn(channelId: Long) = transaction { !Game.find { (Games.channelId eq channelId) and ((Games.status) eq 0 or (Games.status eq 1)) }.empty() }
+        fun findInChannel(channelId: Long) = transaction { Game.find { (Games.status neq 2) and (Games.channelId eq channelId) }.firstOrNull() }
     }
 
     val users by GamesUser referrersOn GamesUsers.user

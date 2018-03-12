@@ -3,6 +3,7 @@ package com.zwolsman.blackjack.discordbot
 import com.zwolsman.blackjack.core.Game
 import com.zwolsman.blackjack.core.game.Status
 import com.zwolsman.blackjack.discordbot.command.listeners.CreateCommandListener
+import com.zwolsman.blackjack.discordbot.command.listeners.ShowGameCommandListener
 import com.zwolsman.blackjack.discordbot.entities.Games
 import com.zwolsman.blackjack.discordbot.entities.GamesUsers
 import com.zwolsman.blackjack.discordbot.entities.Users
@@ -31,6 +32,7 @@ object EntryPoint : HasLogger() {
         val client = createClient(args[0])
         client.dispatcher.run {
             registerListener(CreateCommandListener())
+            registerListener(ShowGameCommandListener())
         }
     }
 

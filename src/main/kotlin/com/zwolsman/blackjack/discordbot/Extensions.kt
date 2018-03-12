@@ -4,6 +4,8 @@ import com.zwolsman.blackjack.core.Game
 import com.zwolsman.blackjack.core.game.Hand
 import com.zwolsman.blackjack.core.game.Player
 import com.zwolsman.blackjack.core.game.Status
+import org.jetbrains.exposed.sql.transactions.transaction
+import sx.blah.discord.handle.obj.IChannel
 
 val Player.currentHand: Hand?
     get() = hands.firstOrNull { it.status == Status.OK }
@@ -22,4 +24,14 @@ fun Hand.didWinOf(dealer: Hand) : Boolean {
 
     println("Unhandeled case")
     return false
+}
+fun IChannel.sendMessage(game: com.zwolsman.blackjack.discordbot.entities.Game) {
+
+    val builder = StringBuilder()
+    transaction {
+        builder.appendln("id: ${game.id.value}")
+        builder.append("players: ")
+        builder.append(game.users.joinToString { "${it.user.mention}, buy-in: ${it.buyIn}" })
+    }
+    this.sendMessage(builder.toString())
 }
