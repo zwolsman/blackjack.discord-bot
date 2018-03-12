@@ -116,7 +116,7 @@ data class GameInstance(val game: Game, val players: ArrayList<IUser> = arrayLis
 
 
         builder = builder.appendField("Dealer", game.dealer.cards.joinToString { it.icon }, true)
-        builder = builder.appendField("Points", game.dealer.points.joinToString(), true)
+        builder = builder.appendField("Points", "${game.dealer.points.last()} ${if(game.dealer.status == Status.BUSTED) ":boom:" else ""}", true)
         emptyField()
 
 
