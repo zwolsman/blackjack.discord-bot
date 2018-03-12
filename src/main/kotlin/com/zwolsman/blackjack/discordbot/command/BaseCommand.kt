@@ -8,7 +8,8 @@ import sx.blah.discord.handle.obj.IChannel
 abstract class BaseCommand(vararg val aliases: String) : HasLogger() {
 
     lateinit var args: List<String>
-
+    abstract val description: String
+    
     open fun matches(cmd: String?): Boolean {
         return aliases.any { it.equals(cmd, true) }
     }
