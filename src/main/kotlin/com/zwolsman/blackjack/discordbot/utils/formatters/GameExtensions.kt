@@ -2,6 +2,8 @@ package com.zwolsman.blackjack.discordbot.utils.formatters
 
 import com.zwolsman.blackjack.core.game.Hand
 import com.zwolsman.blackjack.discordbot.Config
+import com.zwolsman.blackjack.discordbot.currentHand
+import com.zwolsman.blackjack.discordbot.currentPlayer
 import org.jetbrains.exposed.sql.transactions.transaction
 import sx.blah.discord.handle.obj.IChannel
 import sx.blah.discord.util.EmbedBuilder
@@ -50,15 +52,21 @@ private fun playingGame(game: com.zwolsman.blackjack.discordbot.entities.Game, c
     }
 
     transaction {
-        for ((user, player) in game.users.zip(game.instance.players)) {
-            val displayName = channel.guild.getUserByID(user.user.discordId).getDisplayName(channel.guild)
+        for ((user, player) in game.users.map { it.user }.zip(game.instance.players)) {
+            val displayName = channel.guild.getUserByID(user.discordId).getDisplayName(channel.guild)
+
             if (player.hands.size == 1) {
-                val hand = player.hands[0]
-                builder.appendHand(displayName, hand)
+                if (game.isTurnUser(user))
+                    builder.appendHand("▪ $displayName", player.hands[0])
+                else
+                    builder.appendHand(displayName, player.hands[0])
                 continue
             }
             for ((hid, hand) in player.hands.withIndex()) {
-                builder.appendHand("$displayName hand ${hid + 1}", hand)
+                if (game.instance.currentPlayer?.currentHand == hand)
+                    builder.appendHand("▪ $displayName hand ${hid + 1}", hand)
+                else
+                    builder.appendHand("$displayName hand ${hid + 1}", hand)
             }
         }
     }
@@ -67,9 +75,7 @@ private fun playingGame(game: com.zwolsman.blackjack.discordbot.entities.Game, c
 }
 
 private fun EmbedBuilder.appendHand(name: String, hand: Hand) {
-
-    this.appendField(name, hand.cards.joinToString() { it.icon }, true)
+    this.appendField(name, hand.cards.joinToString { it.icon }, true)
     this.appendField("Points", hand.points.joinToString(), true)
-
     this.emptyField()
 }
