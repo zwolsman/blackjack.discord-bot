@@ -1,10 +1,11 @@
 package com.zwolsman.blackjack.discordbot.command.listeners
 
+import com.zwolsman.blackjack.discordbot.Config
 import com.zwolsman.blackjack.discordbot.command.UserAwareCommandHandler
 import com.zwolsman.blackjack.discordbot.command.commands.JoinCommand
 import com.zwolsman.blackjack.discordbot.entities.Game
 import com.zwolsman.blackjack.discordbot.getMinimalBuyIn
-import com.zwolsman.blackjack.discordbot.sendMessage
+import com.zwolsman.blackjack.discordbot.utils.formatters.sendMessage
 
 class JoinCommandListener : UserAwareCommandHandler<JoinCommand>() {
     override val command = JoinCommand()
@@ -37,7 +38,11 @@ class JoinCommandListener : UserAwareCommandHandler<JoinCommand>() {
             return
         }
 
-        logger.info("${user.name} will join game ${game.id.value} and buy in with $buyIn server points in guild ${channel.guild.name}")
+        if(game.users.count() >= Config.maxPlayers) {
+            sendError("This game is full. You'll have to wait for a new game to start.")
+            return
+        }
+        logger.info("${user.name} will join game ${game.id} and buy in with $buyIn server points in guild ${channel.guild.name}")
         game.addUser(user, buyIn)
 
         channel.sendMessage(game)

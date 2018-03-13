@@ -26,16 +26,6 @@ fun Hand.didWinOf(dealer: Hand): Boolean {
     return false
 }
 
-fun IChannel.sendMessage(game: com.zwolsman.blackjack.discordbot.entities.Game) {
-
-    val builder = StringBuilder()
-    transaction {
-        builder.appendln("id: ${game.id.value}")
-        builder.append("players: ")
-        builder.append(game.users.joinToString { "${it.user.mention}, buy-in: ${it.buyIn}" })
-    }
-    this.sendMessage(builder.toString())
-}
 
 fun IChannel.getMinimalBuyIn(): Int? {
     val buyInRegex = "^buy-in-([0-9]+[mk]?)\$".toRegex()
