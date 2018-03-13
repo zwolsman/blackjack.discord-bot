@@ -12,9 +12,9 @@ abstract class BaseCommandHandler<T : BaseCommand> : IListener<MessageReceivedEv
     lateinit var channel: IChannel
 
     override fun handle(event: MessageReceivedEvent) {
+        channel = event.channel
         if (command.parse(event)) {
             logger.info("Received ${command::class.java.simpleName} from ${event.author.getDisplayName(event.guild)} in ${event.guild.name}")
-            channel = event.channel
             channel.toggleTypingStatus()
             commandReceived(command)
         }

@@ -46,10 +46,6 @@ class JoinCommandListener : UserAwareCommandHandler<JoinCommand>() {
 
         logger.info("${user.name} will join game ${game.id} and buy in with $buyIn server points in guild ${channel.guild.name}")
         game.addUser(user, buyIn)
-        if (game.isFull) {
-            logger.info("$Game ${game.id} is full and will be started in guild ${channel.guild.name}")
-            game.instance.start()
-        }
         channel.sendMessage(game)
     }
 }

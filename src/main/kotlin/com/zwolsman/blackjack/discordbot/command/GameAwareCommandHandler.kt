@@ -6,11 +6,14 @@ import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedE
 abstract class GameAwareCommandHandler<T : BaseCommand> : UserAwareCommandHandler<T>() {
     lateinit var game: Game
     override fun handle(event: MessageReceivedEvent) {
+        if (!command.parse(event)) {
+            return
+        }
 
         val game = Game.findInChannel(event.channel)
 
         if (game == null) {
-            logger.error("#${channel.name} doesn't have a game in ${event.guild.name}!")
+            logger.error("#${event.channel.name} doesn't have a game in ${event.guild.name}!")
             return
         }
         this.game = game
