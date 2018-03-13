@@ -15,6 +15,7 @@ abstract class BaseCommandHandler<T : BaseCommand> : IListener<MessageReceivedEv
         if (command.parse(event)) {
             logger.info("Received ${command::class.java.simpleName} from ${event.author.getDisplayName(event.guild)} in ${event.guild.name}")
             channel = event.channel
+            channel.toggleTypingStatus()
             commandReceived(command)
         }
     }

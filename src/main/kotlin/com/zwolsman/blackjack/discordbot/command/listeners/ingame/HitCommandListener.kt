@@ -1,4 +1,4 @@
-package com.zwolsman.blackjack.discordbot.command.listeners
+package com.zwolsman.blackjack.discordbot.command.listeners.ingame
 
 import com.zwolsman.blackjack.core.game.Option
 import com.zwolsman.blackjack.discordbot.command.GameAwareCommandHandler
@@ -9,6 +9,7 @@ class HitCommandListener : GameAwareCommandHandler<HitCommand>() {
     override val command = HitCommand()
 
     override fun commandReceived(command: HitCommand) {
+        //TODO refactor so it can be re-used
         if (game.status != 1) {
             logger.error("Game ${game.id} in ${channel.name} on ${channel.guild.name} is not started yet!")
             return

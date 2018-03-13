@@ -3,6 +3,8 @@ package com.zwolsman.blackjack.discordbot
 import com.zwolsman.blackjack.core.Game
 import com.zwolsman.blackjack.core.game.Status
 import com.zwolsman.blackjack.discordbot.command.listeners.*
+import com.zwolsman.blackjack.discordbot.command.listeners.ingame.HitCommandListener
+import com.zwolsman.blackjack.discordbot.command.listeners.ingame.StandCommandListener
 import com.zwolsman.blackjack.discordbot.entities.Games
 import com.zwolsman.blackjack.discordbot.entities.GamesUsers
 import com.zwolsman.blackjack.discordbot.entities.Users
@@ -10,7 +12,6 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils.create
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.slf4j.LoggerFactory
 import sx.blah.discord.api.ClientBuilder
 import sx.blah.discord.api.IDiscordClient
 import sx.blah.discord.handle.obj.IChannel
@@ -35,6 +36,7 @@ object EntryPoint : HasLogger() {
             registerListener(JoinCommandListener())
             registerListener(PointsCommandListener())
             registerListener(HitCommandListener())
+            registerListener(StandCommandListener())
         }
     }
 

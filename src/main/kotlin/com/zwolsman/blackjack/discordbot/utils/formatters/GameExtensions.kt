@@ -56,7 +56,7 @@ private fun playingGame(game: com.zwolsman.blackjack.discordbot.entities.Game, c
             val displayName = channel.guild.getUserByID(user.discordId).getDisplayName(channel.guild)
 
             if (player.hands.size == 1) {
-                if (game.isTurnUser(user))
+                if (game.instance.currentPlayer == player)
                     builder.appendHand("▪ $displayName", player.hands[0])
                 else
                     builder.appendHand(displayName, player.hands[0])
