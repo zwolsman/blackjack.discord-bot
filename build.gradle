@@ -28,6 +28,9 @@ dependencies {
     compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
     compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.25'
     compile 'org.jetbrains.exposed:exposed:0.10.1'
+    compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: '2.9.4'
+    compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.9-rc'
+
 }
 
 compileKotlin {

@@ -1,0 +1,11 @@
+prefix: "!"
+#botToken: ""
+#
+#database:
+# - user: "blackjack"
+# - password: "password"
+
+maxPlayers: 4
+tableConfig:
+ - minBuyIn: 50
+   maxInstances: 1

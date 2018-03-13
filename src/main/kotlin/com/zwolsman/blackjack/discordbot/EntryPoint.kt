@@ -40,7 +40,7 @@ object EntryPoint : HasLogger() {
 
     private fun setupDb() {
         val jdbc = "jdbc:mysql://localhost:3306/blackjack"
-        val driver = "com.mysql.jdbc.Driver"
+        val driver = "com.mysql.cj.jdbc.Driver"
         Database.connect(jdbc, driver, "blackjack", "zaQXZSKANp9zuP5W")
         transaction {
             logger.addLogger(StdOutSqlLogger)
