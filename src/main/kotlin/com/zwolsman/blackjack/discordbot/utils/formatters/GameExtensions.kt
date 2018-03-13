@@ -17,7 +17,6 @@ private fun openGame(game: com.zwolsman.blackjack.discordbot.entities.Game, chan
     val builder = EmbedBuilder()
             .withTitle(":game_die: Game ${game.id}")
             .withTimestamp(Date().toInstant())
-    //.withDesc("This game is open and has ${}")
 
     val players = transaction { game.users.map { it.user.mention to it.buyIn } }
     val spotsLeft = Config.maxPlayers - players.size

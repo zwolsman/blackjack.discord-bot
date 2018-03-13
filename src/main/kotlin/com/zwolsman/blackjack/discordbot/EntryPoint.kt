@@ -2,10 +2,7 @@ package com.zwolsman.blackjack.discordbot
 
 import com.zwolsman.blackjack.core.Game
 import com.zwolsman.blackjack.core.game.Status
-import com.zwolsman.blackjack.discordbot.command.listeners.CreateCommandListener
-import com.zwolsman.blackjack.discordbot.command.listeners.JoinCommandListener
-import com.zwolsman.blackjack.discordbot.command.listeners.PointsCommandListener
-import com.zwolsman.blackjack.discordbot.command.listeners.ShowGameCommandListener
+import com.zwolsman.blackjack.discordbot.command.listeners.*
 import com.zwolsman.blackjack.discordbot.entities.Games
 import com.zwolsman.blackjack.discordbot.entities.GamesUsers
 import com.zwolsman.blackjack.discordbot.entities.Users
@@ -37,6 +34,7 @@ object EntryPoint : HasLogger() {
             registerListener(ShowGameCommandListener())
             registerListener(JoinCommandListener())
             registerListener(PointsCommandListener())
+            registerListener(HitCommandListener())
         }
     }
 
