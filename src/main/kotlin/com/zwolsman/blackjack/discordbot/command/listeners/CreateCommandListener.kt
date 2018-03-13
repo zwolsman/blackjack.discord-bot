@@ -22,7 +22,7 @@ class CreateCommandListener : UserAwareCommandHandler<CreateCommand>() {
 
         if (minBuyIn == null) {
             logger.error("Can't find minimum bet amount for ${channel.name} in ${channel.guild.name}")
-            sendError("Invalid channel to create a game, please use a channel that starts with `buy-in`")
+            sendCorrectChannels()
             return
         }
         logger.info("The minimum buy in is $minBuyIn, parsed from ${channel.name} in guild ${channel.guild.name}")
@@ -49,8 +49,13 @@ class CreateCommandListener : UserAwareCommandHandler<CreateCommand>() {
             return@transaction game
         }
 
-        logger.info("Created a new game")
+        logger.info("Created a new game with id ${game.id.value}")
 
         channel.sendMessage("Created game with id ${game.id.value} and ${user.mention} bought in with **$buyIn server points**")
+    }
+
+    private fun sendCorrectChannels() {
+        val channels = channel.guild.categories.flatMap { it.channels }.filter { it.getMinimalBuyIn() != null }.joinToString { it.mention() }
+        sendError("Invalid channel to create a game, please use one of the following channels: $channels")
     }
 }
