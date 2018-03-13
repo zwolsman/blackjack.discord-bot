@@ -39,16 +39,17 @@ class JoinCommandListener : UserAwareCommandHandler<JoinCommand>() {
             return
         }
 
-        val usersCount = transaction { game.users.count() }
-
-        if (usersCount >= Config.maxPlayers) {
+        if (game.isFull) {
             sendError("This game is full. You'll have to wait for a new game to start.")
             return
         }
 
         logger.info("${user.name} will join game ${game.id} and buy in with $buyIn server points in guild ${channel.guild.name}")
         game.addUser(user, buyIn)
-
+        if (game.isFull) {
+            logger.info("$Game ${game.id} is full and will be started in guild ${channel.guild.name}")
+            game.instance.start()
+        }
         channel.sendMessage(game)
     }
 }

@@ -2,6 +2,7 @@ package com.zwolsman.blackjack.discordbot.entities
 
 import com.zwolsman.blackjack.core.game.Option
 import com.zwolsman.blackjack.core.game.Player
+import com.zwolsman.blackjack.discordbot.Config
 import com.zwolsman.blackjack.discordbot.currentHand
 import com.zwolsman.blackjack.discordbot.currentPlayer
 import org.jetbrains.exposed.dao.EntityID
@@ -77,4 +78,6 @@ class Game(id: EntityID<Int>) : IntEntity(id) {
 
             return game
         }
+    val isFull: Boolean
+        get() = transaction { users.count() == Config.maxPlayers }
 }
