@@ -3,13 +3,15 @@ package com.zwolsman.blackjack.discordbot.utils.formatters
 import com.zwolsman.blackjack.core.Game
 import com.zwolsman.blackjack.core.game.Hand
 import com.zwolsman.blackjack.core.game.Player
-import com.zwolsman.blackjack.discordbot.*
+import com.zwolsman.blackjack.discordbot.Config
+import com.zwolsman.blackjack.discordbot.currentHand
+import com.zwolsman.blackjack.discordbot.currentPlayer
+import com.zwolsman.blackjack.discordbot.didWinOf
 import com.zwolsman.blackjack.discordbot.entities.User
 import org.jetbrains.exposed.sql.transactions.transaction
 import sx.blah.discord.handle.obj.IChannel
 import sx.blah.discord.util.EmbedBuilder
 import java.util.*
-import kotlin.math.roundToInt
 import kotlin.math.roundToLong
 
 fun IChannel.sendMessage(game: com.zwolsman.blackjack.discordbot.entities.Game) {
@@ -49,11 +51,7 @@ private fun playingGame(game: com.zwolsman.blackjack.discordbot.entities.Game, c
             .withTitle(":game_die: Game ${game.id}")
             .withTimestamp(Date().toInstant())
 
-    if (game.history.isEmpty()) {
-        builder.appendField("History", "None", false)
-    } else {
-        builder.appendField("History", game.history, false)
-    }
+    builder.appendHand("Dealer", game.instance.dealer)
 
     transaction {
         builder.appendPlayers(game.users.map { it.user }.zip(game.instance.players), game.instance, channel)
@@ -85,9 +83,17 @@ private fun finishedGame(game: com.zwolsman.blackjack.discordbot.entities.Game, 
             builder.appendField("Winners", winners.joinToString(separator = "\r\n") { it.first }, true)
             builder.appendField("Earnings", winners.joinToString(separator = "\r\n") { it.second.toString() }, true)
             builder.emptyField()
+        } else {
+            if (game.instance.dealer.isBlackjack) {
+                builder.appendDesc("SIKE! Dealer got blackjack :money_with_wings: ")
+            } else {
+                builder.appendDesc("There are  no winners this round, only losers :rolling_eyes:")
+            }
         }
+        builder.appendHand("Dealer", game.instance.dealer)
         builder.appendPlayers(entities.map { it.first.user to it.second }, game.instance, channel)
     }
+
     channel.sendMessage(builder.build())
 }
 
