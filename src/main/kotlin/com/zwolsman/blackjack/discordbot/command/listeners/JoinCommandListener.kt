@@ -6,6 +6,7 @@ import com.zwolsman.blackjack.discordbot.command.commands.JoinCommand
 import com.zwolsman.blackjack.discordbot.entities.Game
 import com.zwolsman.blackjack.discordbot.getMinimalBuyIn
 import com.zwolsman.blackjack.discordbot.utils.formatters.sendMessage
+import org.jetbrains.exposed.sql.transactions.transaction
 
 class JoinCommandListener : UserAwareCommandHandler<JoinCommand>() {
     override val command = JoinCommand()
@@ -38,10 +39,13 @@ class JoinCommandListener : UserAwareCommandHandler<JoinCommand>() {
             return
         }
 
-        if(game.users.count() >= Config.maxPlayers) {
+        val usersCount = transaction { game.users.count() }
+
+        if (usersCount >= Config.maxPlayers) {
             sendError("This game is full. You'll have to wait for a new game to start.")
             return
         }
+
         logger.info("${user.name} will join game ${game.id} and buy in with $buyIn server points in guild ${channel.guild.name}")
         game.addUser(user, buyIn)
 
