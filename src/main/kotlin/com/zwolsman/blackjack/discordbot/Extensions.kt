@@ -42,3 +42,6 @@ fun IChannel.getMinimalBuyIn(): Int? {
 
     return buyInRegex.find(this.name)?.groups?.get(1)?.value?.toInt()
 }
+
+val IChannel.isBlackjackChannel: Boolean
+    get() = getMinimalBuyIn() != null
