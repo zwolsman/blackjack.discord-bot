@@ -2,5 +2,5 @@ package com.zwolsman.blackjack.discordbot
 
 object Config {
     const val prefix = "!"
-    const val maxPlayers = 7
+    const val maxPlayers = 5
 }

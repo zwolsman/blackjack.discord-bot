@@ -25,6 +25,7 @@ object Games : IntIdTable() {
     val history = text("history").default("")
     val status = integer("status").default(0)
     val channelId = long("channel_id")
+    val msgId = long("message_id").nullable()
 }
 
 typealias GameInstance = com.zwolsman.blackjack.core.Game
@@ -37,6 +38,32 @@ class Game(id: EntityID<Int>) : IntEntity(id) {
         fun findInChannel(channel: IChannel) = findInChannel(channel.longID)
         val logger = LoggerFactory.getLogger(this::class.java)!!
     }
+
+
+    val users by GamesUser referrersOn GamesUsers.game
+    var seed by Games.seed
+    var history by Games.history
+    var status by Games.status
+    var channelId by Games.channelId
+    var msgId by Games.msgId
+
+    val instance: com.zwolsman.blackjack.core.Game
+        get() {
+            return transaction {
+                val game = GameInstance(seed)
+                for (i in 1..users.count()) {
+                    game.addPlayer(Player())
+                }
+                game.start()
+                val options = history.split(",").filter { it.isNotBlank() }.map { Option.values()[it.toInt()] }
+                for (option in options)
+                    game.currentPlayer?.currentHand?.playOption(option)
+
+                game
+            }
+        }
+    val isFull: Boolean
+        get() = transaction { users.count() == Config.maxPlayers }
 
     fun addUser(user: User, buyIn: Int) {
         transaction {
@@ -86,35 +113,9 @@ class Game(id: EntityID<Int>) : IntEntity(id) {
 
     fun isTurnUser(user: User): Boolean {
         return transaction {
-
             val pairs = this@Game.users.zip(instance.players)
-            val currentPlayer = instance.currentPlayer
             pairs.indexOfFirst { it.second == instance.currentPlayer && it.first.user.discordId == user.discordId }
         } != -1
     }
 
-
-    val users by GamesUser referrersOn GamesUsers.game
-    var seed by Games.seed
-    var history by Games.history
-    var status by Games.status
-    var channelId by Games.channelId
-
-    val instance: com.zwolsman.blackjack.core.Game
-        get() {
-            return transaction {
-                val game = GameInstance(seed)
-                for (i in 1..users.count()) {
-                    game.addPlayer(Player())
-                }
-                game.start()
-                val options = history.split(",").filter { it.isNotBlank() }.map { Option.values()[it.toInt()] }
-                for (option in options)
-                    game.currentPlayer?.currentHand?.playOption(option)
-
-                game
-            }
-        }
-    val isFull: Boolean
-        get() = transaction { users.count() == Config.maxPlayers }
 }

@@ -5,6 +5,7 @@ import com.zwolsman.blackjack.discordbot.command.commands.ShowGameCommand
 import com.zwolsman.blackjack.discordbot.entities.Game
 import com.zwolsman.blackjack.discordbot.isBlackjackChannel
 import com.zwolsman.blackjack.discordbot.utils.formatters.sendMessage
+import org.jetbrains.exposed.sql.transactions.transaction
 
 class ShowGameCommandListener : UserAwareCommandHandler<ShowGameCommand>() {
     override val command = ShowGameCommand()
@@ -18,7 +19,7 @@ class ShowGameCommandListener : UserAwareCommandHandler<ShowGameCommand>() {
             val playingGames = channel.guild.channels.map { it.longID }.mapNotNull { Game.findInChannel(it) }
             channel.sendMessage(playingGames.joinToString(separator = ",\r\n") { "Game ${it.id.value} is playing in <#${it.channelId}>" })
         } else if (game != null) { //Show the current game in the channel
-
+            transaction { game.msgId = null }
             channel.sendMessage(game)
         }
 

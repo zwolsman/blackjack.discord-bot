@@ -22,6 +22,8 @@ fun Hand.didWinOf(dealer: Hand): Boolean {
     if (dealer.points.last() < points.last())
         return true
 
+    if (dealer.points.last() == points.last())
+        return false
     println("Unhandeled case")
     return false
 }

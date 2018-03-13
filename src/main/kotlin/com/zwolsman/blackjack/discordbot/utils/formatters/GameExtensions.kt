@@ -11,6 +11,7 @@ import com.zwolsman.blackjack.discordbot.entities.User
 import org.jetbrains.exposed.sql.transactions.transaction
 import sx.blah.discord.handle.obj.IChannel
 import sx.blah.discord.util.EmbedBuilder
+import sx.blah.discord.util.RequestBuffer
 import java.util.*
 import kotlin.math.roundToLong
 
@@ -41,7 +42,19 @@ private fun openGame(game: com.zwolsman.blackjack.discordbot.entities.Game, chan
         builder.emptyField()
     }
 
-    channel.sendMessage(builder.build())
+
+    RequestBuffer.request {
+        val msgId = transaction { game.msgId }
+        if (msgId != null) {
+            channel.fetchMessage(msgId).edit(builder.build())
+            channel.typingStatus = false
+        } else {
+            transaction {
+                val id = channel.sendMessage(builder.build()).longID
+                game.msgId = id
+            }
+        }
+    }
 }
 
 private fun EmbedBuilder.emptyField(inline: Boolean = true) = this.appendField("\u200E", "\u200E", inline)
@@ -57,7 +70,18 @@ private fun playingGame(game: com.zwolsman.blackjack.discordbot.entities.Game, c
         builder.appendPlayers(game.users.map { it.user }.zip(game.instance.players), game.instance, channel)
     }
 
-    channel.sendMessage(builder.build())
+    RequestBuffer.request {
+        val msgId = transaction { game.msgId }
+        if (msgId != null) {
+            channel.fetchMessage(msgId).edit(builder.build())
+            channel.typingStatus = false
+        } else {
+            transaction {
+                val id = channel.sendMessage(builder.build()).longID
+                game.msgId = id
+            }
+        }
+    }
 }
 
 
@@ -81,7 +105,7 @@ private fun finishedGame(game: com.zwolsman.blackjack.discordbot.entities.Game, 
 
         if (!winners.isEmpty()) {
             builder.appendField("Winners", winners.joinToString(separator = "\r\n") { it.first }, true)
-            builder.appendField("Earnings", winners.joinToString(separator = "\r\n") { it.second.toString() }, true)
+            builder.appendField("Payouts", winners.joinToString(separator = "\r\n") { it.second.toString() + " server points" }, true)
             builder.emptyField()
         } else {
             if (game.instance.dealer.isBlackjack) {
@@ -94,7 +118,18 @@ private fun finishedGame(game: com.zwolsman.blackjack.discordbot.entities.Game, 
         builder.appendPlayers(entities.map { it.first.user to it.second }, game.instance, channel)
     }
 
-    channel.sendMessage(builder.build())
+    RequestBuffer.request {
+        val msgId = transaction { game.msgId }
+        if (msgId != null) {
+            channel.fetchMessage(msgId).edit(builder.build())
+            channel.typingStatus = false
+        } else {
+            transaction {
+                val id = channel.sendMessage(builder.build()).longID
+                game.msgId = id
+            }
+        }
+    }
 }
 
 private fun EmbedBuilder.appendPlayers(zip: List<Pair<User, Player>>, game: Game, channel: IChannel) {

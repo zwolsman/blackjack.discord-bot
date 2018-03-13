@@ -4,6 +4,7 @@ import com.zwolsman.blackjack.discordbot.command.UserAwareCommandHandler
 import com.zwolsman.blackjack.discordbot.command.commands.CreateCommand
 import com.zwolsman.blackjack.discordbot.entities.Game
 import com.zwolsman.blackjack.discordbot.getMinimalBuyIn
+import com.zwolsman.blackjack.discordbot.utils.formatters.sendMessage
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
 
@@ -51,7 +52,7 @@ class CreateCommandListener : UserAwareCommandHandler<CreateCommand>() {
 
         logger.info("Created a new game with id ${game.id.value}")
 
-        channel.sendMessage("Created game with id ${game.id.value} and ${user.mention} bought in with **$buyIn server points**")
+        channel.sendMessage(game)
     }
 
     private fun sendCorrectChannels() {
