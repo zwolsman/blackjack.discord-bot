@@ -5,6 +5,7 @@ import com.zwolsman.blackjack.discordbot.command.listeners.JoinCommandListener
 import com.zwolsman.blackjack.discordbot.command.listeners.PointsCommandListener
 import com.zwolsman.blackjack.discordbot.command.listeners.ShowGameCommandListener
 import com.zwolsman.blackjack.discordbot.command.listeners.ingame.HitCommandListener
+import com.zwolsman.blackjack.discordbot.command.listeners.ingame.SplitCommandListener
 import com.zwolsman.blackjack.discordbot.command.listeners.ingame.StandCommandListener
 import com.zwolsman.blackjack.discordbot.entities.Games
 import com.zwolsman.blackjack.discordbot.entities.GamesUsers
@@ -34,6 +35,7 @@ object EntryPoint : HasLogger() {
             registerListener(PointsCommandListener())
             registerListener(HitCommandListener())
             registerListener(StandCommandListener())
+            registerListener(SplitCommandListener())
         }
     }
 
